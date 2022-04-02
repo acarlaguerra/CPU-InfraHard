@@ -1,6 +1,6 @@
 module mux_IorD (
 
-    input wire  [2:0] IorD,         // Selector
+    input wire  [2:0] selector,         // IorD
     input wire  [31:0] Data_0,      // Data from PC (Address)
     input wire  [31:0] Data_1,      // Exception
     input wire  [31:0] Data_2,      // ALUResult
