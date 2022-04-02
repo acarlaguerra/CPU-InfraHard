@@ -5,6 +5,5 @@ module shift_left2(
 );
     
     assign Data_out     =   Data_in << 2;
->>>>>>> 789d4f417dd125fccf5be7a6a43f7a1f8af631f2
 
 endmodule
