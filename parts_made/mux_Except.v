@@ -6,13 +6,13 @@ module mux_Except(
     output  wire    [31:0]      Data_out    
 );
 
-parameter OPCODE    = 32'd253;
-parameter Overflow  = 32'd254;
-parameter Div0      = 32'255;
+    parameter OPCODE    = 32'd253;
+    parameter Overflow  = 32'd254;
+    parameter Div0      = 32'255;
 
-wire [31:0] Aux1;
+    wire [31:0] Aux1;
 
-assign Aux1     =   (ExcptCtrl[0])? Overflow : OPCODE;     // if true receives 254, otherwise receives 253
-assign Data_out =   (ExcptCtrl[1])? Div0 : Aux1;         // if true receives 255, otherwise receives Aux1
+    assign Aux1     =   (ExcptCtrl[0])? Overflow : OPCODE;     // if true receives 254, otherwise receives 253
+    assign Data_out =   (ExcptCtrl[1])? Div0 : Aux1;         // if true receives 255, otherwise receives Aux1
 
 endmodule

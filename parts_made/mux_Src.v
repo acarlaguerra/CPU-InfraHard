@@ -6,6 +6,6 @@ module mux_Src(
     input   wire    [31:0]  Data_out
 );
 
-assign  Data_out    =   (SHIFTSrc[0])? Data_1  :   Data_0;
+    assign  Data_out    =   (SHIFTSrc[0])? Data_1  :   Data_0;
 
 endmodule
