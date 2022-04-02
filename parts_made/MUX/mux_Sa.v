@@ -11,5 +11,13 @@ module mux_Sa (
 
     assign out = (selector[0]) ? Data_1 : Data_0;
     assign Data_out = (selector[1]) ? Data_2 : out;
+
+    /*
+
+    Data_0 ---- 0 |
+    Data_1 ---- 1 | --- out --- 0 \
+    Data_2 -------------------- 1 / --- Data_out ->
+
+    */
     
 endmodule
