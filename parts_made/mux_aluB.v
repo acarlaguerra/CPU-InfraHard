@@ -12,10 +12,10 @@ module mux_aluB(
     wire [31:0] out2;
 
     /*
-    Data_0 -- 0|
-    four   -- 1| -- out1 -- 0\
-    Data_2 -- 0|              | -- Data_out ->
-    Data_3 -- 1| -- out2 -- 1/
+        Data_0 -- 0|
+        four   -- 1| -- out1 -- 0\
+        Data_2 -- 0|              | -- Data_out ->
+        Data_3 -- 1| -- out2 -- 1/
     */
 
     assign out1 = (AluSrcB[0]) ? four : Data_0;

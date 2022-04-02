@@ -11,19 +11,20 @@ module mux_wd(
     input wire [31:0] Data_8, // PC+4 (jal) // 1000
     output wire [31:0] Data_out
 );
+
     wire [31:0] out1, out2, out3, out4, out5, out6, out7;
     parameter spAddr = 32'd227;
 
     /*
-    Data_0 -- 0|
-    Data_1 -- 1| -- out1 -- 0\
-    Data_2 -- 0|              | -- out5 -- 0\
-    Data_3 -- 1| -- out2 -- 1/               \
-    spAddr -- 0|                              | -- out7 -- 0\
-    Data_5 -- 1| -- out3 -- 0\               /               \
-    Data_6 -- 0|              | -- out6 -- 1/                 | -- Data_out ->
-    Data_7 -- 1| -- out4 -- 1/                               /
-    Data_8 ----------------------------------------------- 1/
+        Data_0 -- 0| 
+        Data_1 -- 1| -- out1 -- 0\
+        Data_2 -- 0|              | -- out5 -- 0\
+        Data_3 -- 1| -- out2 -- 1/               \
+        spAddr -- 0|                              | -- out7 -- 0\
+        Data_5 -- 1| -- out3 -- 0\               /               \
+        Data_6 -- 0|              | -- out6 -- 1/                 | -- Data_out ->
+        Data_7 -- 1| -- out4 -- 1/                               /
+        Data_8 ----------------------------------------------- 1/
     */
 
     assign out1 = (DataSrc[0]) ? Data_1 : Data_0;
