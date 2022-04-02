@@ -8,9 +8,12 @@ module mux_aluB(
 );
 
     parameter four = 32'd4;
+    wire out1 [31:0];
+    wire out2 [31:0];
+    
     assign out1 = (AluSrcB[0]) ? four : Data_0;
     assign out2 = (AluSrcB[0]) ? Data_3 : Data_2;
     assign Data_out = (AluSrcB[1]) ? out2 : out1;
-    
+
 endmodule
 
