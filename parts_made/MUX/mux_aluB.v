@@ -18,9 +18,9 @@ module mux_aluB(
         Data_3 -- 1| -- out2 -- 1/
     */
 
-    assign out1 = (AluSrcB[0]) ? four : Data_0;
-    assign out2 = (AluSrcB[0]) ? Data_3 : Data_2;
-    assign Data_out = (AluSrcB[1]) ? out2 : out1;
+    assign out1 = (ALUSrcB[0]) ? four : Data_0;
+    assign out2 = (ALUSrcB[0]) ? Data_3 : Data_2;
+    assign Data_out = (ALUSrcB[1]) ? out2 : out1;
 
 endmodule
 
