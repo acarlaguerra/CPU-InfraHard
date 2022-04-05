@@ -1,6 +1,6 @@
 // MUX for exceptions
 module mux_Except(
-    input   wire    [2:0],       ExcptCtrl,
+    input   wire    [1:0],       ExcptCtrl,
 //  input   wire    [31:0]     Data_0, 
 //  input   wire    [31:0]      Data_1, 
     output  wire    [31:0]      Data_out    
