@@ -2,7 +2,7 @@ module mux_Sa (
     input wire  [1:0] selector,    // SHIFTAmt
     input wire  [4:0] Data_0,      // rt
     input wire  [4:0] Data_1,      // shamt
-    input wire  [4:0] Data_2       // Mem [offset + rs]
+    input wire  [4:0] Data_2,       // Mem [offset + rs]
 
     output wire [4:0] Data_out     // N (Quantidade de vezes que vai haver o deslocamento)
 );
