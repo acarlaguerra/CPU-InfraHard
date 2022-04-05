@@ -8,11 +8,18 @@ module mux_Except(
 
     parameter OPCODE    = 32'd253;
     parameter Overflow  = 32'd254;
-    parameter Div0      = 32'255;
+    parameter Div0      = 32'd255;
 
-    wire [31:0] Aux1;
+    wire [31:0] out1;
 
-    assign Aux1     =   (ExcptCtrl[0])? Overflow : OPCODE;     // if true receives 254, otherwise receives 253
-    assign Data_out =   (ExcptCtrl[1])? Div0 : Aux1;         // if true receives 255, otherwise receives Aux1
+    /*
+        OPCODE   -- 0|
+        OVERFLOW -- 1| -- out1 -- 0\
+                                    | -- Data_out ->
+        DIV0     ---------------- 1/
+    */
+
+    assign out1     =   (ExcptCtrl[0]) ? Overflow : OPCODE;     // if true receives 254, otherwise receives 253
+    assign Data_out =   (ExcptCtrl[1]) ? Div0 : out1;         // if true receives 255, otherwise receives Aux1
 
 endmodule

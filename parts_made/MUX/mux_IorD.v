@@ -1,5 +1,4 @@
 module mux_IorD (
-
     input wire  [2:0] selector,         // IorD
     input wire  [31:0] Data_0,      // Data from PC (Address)
     input wire  [31:0] Data_1,      // Exception
@@ -7,7 +6,6 @@ module mux_IorD (
     input wire  [31:0] Data_3,      // ALUOut
     input wire  [31:0] Data_4,      // ALUSrcA
     input wire  [31:0] Data_5,      // ALUSrcB
-
     output wire [31:0] Data_out     // Output from MUX
 );
     
