@@ -230,7 +230,138 @@ module cpu (
         ReadData2Out
     );
       
-     
+
+    // MUXES
+    //mux_IorD
+    mux_IorD mux_IorD_( //Completo - Falta revisar
+        IorD, // selector
+        PCOut,
+        EXCPOut,
+        ALUResult,
+        ALUOutOut,
+        AOUt,
+        BOut,
+        MUXIorDOut
+
+
+    );
+    
+    //mux_LO
+    mux_LO mux_LO_( //Faltando componentes para completar
+        LOSrc,
+        
+        MUXLOOut
+
+    );
+
+    //mux_HI
+    mux_HI mux_HI_( //Faltando componentes para completar
+        HISrc,
+
+        MUXHIOut
+
+
+
+
+    );
+
+    //mux_wr
+    mux_wr mux_WR_( //Completo - Falta revisar
+        RegDst,
+        RT,
+        RD,
+        MUXRegDstOut
+
+        
+
+    );
+
+    //mux_wd
+    mux_wd mux_WD_( //Completo - Falta revisar
+        DataSrc,
+        ALUOutOut,
+        LSOut,
+        HIOut,
+        LOOut,
+        SL16Out,
+        LT,
+        SHIFTRegOut,
+        PCOut
+
+
+    );
+
+    //mux_LdA
+    mux_LdA mux_LdA_( //Completo - Falta revisar
+        LoadAMem,
+        RegAWrite,
+        MDROut,
+        MUXLoadAOut
+
+
+    );
+
+    //mux_LdB
+    mux_LdB mux_LdB_( //Completo - Falta revisar
+        LoadBMem,
+        RegBWrite,
+        MDROut,
+        MUXLoadBOut
+
+
+    );
+
+    //mux_Sa
+    mux_Sa mux_Sa_( //Completo - Falta revisar
+        SHIFTAmt,
+        BOut[4:0],
+        MDROut[4:0],
+        IMMEDIATE[10:6],
+        MUXSHIFTAmtOut
+        
+
+    );
+
+    //mux_Src
+    mux_Src mux_Src_( //Completo - Falta revisar
+        SHIFTSrc,
+        BOut,
+        AOUt,
+        MUXSHIFTSrcOut
+
+    );
+
+    //mux_aluA
+    mux_aluA mux_aluA_( //Incompleto
+        ALUSrcA,
+        PCOut,
+        RS,
+        MUXALUSrcAOut
+
+    );
+
+    //mux_aluB
+    mux_aluB mux_aluB_( //Incompleto
+        ALUSrcB,
+        RT,
+        SE16_32Out,
+
+        
+
+    );
+
+    //mux_pc
+    mux_pc mux_pc_( //Incompleto
+        PCSrc,
+        ALUResult,
+        ALUOutOut,
+        EPCOut,
+        //Parte da concatenação 
+        MUXPCSrcOut
+
+
+    );
+
 
 
 
