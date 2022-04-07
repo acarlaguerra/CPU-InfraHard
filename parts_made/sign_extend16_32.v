@@ -1,6 +1,6 @@
 module sign_extend16_32(
 
-    input wire  [15:0] Data_in,     // Instruction
+    input wire  [15:0] Data_in,     // IMMEDIATE
     output wire [31:0] Data_out
 
 );

@@ -281,7 +281,18 @@ module cpu (
         SL2Out,   
     );
 
-    // MUXES
+// SIGN EXTENDS
+     sign_extend1_32 sign_extend1_32_(
+         LT,
+         SE1_32Out
+     );
+
+     sign_extend16_32 sign_extend16_32_(
+         IMMEDIATE,
+         SE16_32Out
+     );
+
+// MUXES
     //mux_IorD
     mux_IorD mux_IorD_( //Completo - Falta revisar
         IorD, // selector
