@@ -273,7 +273,7 @@ module cpu (
 
     shift_left16 shift_left16_(
         IMMEDIATE,
-        SL16Out;
+        SL16Out
     );
 
     shift_left2 shift_left2_(
