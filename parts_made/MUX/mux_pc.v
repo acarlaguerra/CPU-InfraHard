@@ -1,5 +1,5 @@
 module mux_pc(
-    input wire [1:0] PCSrc,
+    input wire [1:0] PCSrc, 
     input wire [31:0] Data_0, // ALU result (PC+4)  //  00
     input wire [31:0] Data_1, // ALUOut             //  01
     input wire [31:0] Data_2, // offset (formato J) //  10

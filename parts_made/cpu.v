@@ -294,8 +294,8 @@ module cpu (
 
 // MUXES
     //mux_IorD
-    mux_IorD mux_IorD_( //Completo - Falta revisar
-        IorD, // selector
+    mux_IorD mux_IorD_( 
+        IorD, 
         PCOut,
         EXCPOut,
         ALUResult,
@@ -303,11 +303,8 @@ module cpu (
         AOUt,
         BOut,
         MUXIorDOut
-
-
     );
     
-    //mux_LO
     mux_LO mux_LO_( //Faltando componentes para completar
         LOSrc,
         
@@ -315,112 +312,83 @@ module cpu (
 
     );
 
-    //mux_HI
     mux_HI mux_HI_( //Faltando componentes para completar
         HISrc,
 
         MUXHIOut
-
-
-
-
     );
 
-    //mux_wr
-    mux_wr mux_WR_( //Completo - Falta revisar
+    mux_wr mux_WR_(
         RegDst,
         RT,
-        RD,
-        MUXRegDstOut
-
-        
-
+        IMMEDIATE,
+        MUXRegDstOut 
     );
 
-    //mux_wd
-    mux_wd mux_WD_( //Completo - Falta revisar
+    mux_wd mux_WD_(
         DataSrc,
         ALUOutOut,
         LSOut,
         HIOut,
         LOOut,
         SL16Out,
-        LT,
+        SE1_32Out,
         SHIFTRegOut,
-        PCOut
-
-
+        PCOut 
     );
-
-    //mux_LdA
-    mux_LdA mux_LdA_( //Completo - Falta revisar
+ 
+    mux_LdA mux_LdA_( 
         LoadAMem,
-        RegAWrite,
+        ReadData1Out,
         MDROut,
         MUXLoadAOut
-
-
     );
 
-    //mux_LdB
-    mux_LdB mux_LdB_( //Completo - Falta revisar
+    mux_LdB mux_LdB_( 
         LoadBMem,
-        RegBWrite,
+        ReadData2Out,
         MDROut,
         MUXLoadBOut
-
-
     );
 
-    //mux_Sa
     mux_Sa mux_Sa_( //Completo - Falta revisar
         SHIFTAmt,
         BOut[4:0],
         MDROut[4:0],
         IMMEDIATE[10:6],
         MUXSHIFTAmtOut
-        
-
     );
 
-    //mux_Src
+
     mux_Src mux_Src_( //Completo - Falta revisar
         SHIFTSrc,
         BOut,
         AOUt,
         MUXSHIFTSrcOut
-
     );
 
-    //mux_aluA
-    mux_aluA mux_aluA_( //Incompleto
+    mux_aluA mux_aluA_(
         ALUSrcA,
         PCOut,
-        RS,
+        AOut,
         MUXALUSrcAOut
-
     );
 
-    //mux_aluB
-    mux_aluB mux_aluB_( //Incompleto
+    mux_aluB mux_aluB_(
         ALUSrcB,
-        RT,
+        BOut,
         SE16_32Out,
-
-        
-
+        SL2Out,
+        MUXALUSrcBOut      
     );
 
-    //mux_pc
-    mux_pc mux_pc_( //Incompleto
+    mux_pc mux_pc_( 
         PCSrc,
-        ALUResult,
+        ALUResult, 
         ALUOutOut,
+        ConcatIPCOut,
         EPCOut,
-        //Parte da concatenação 
         MUXPCSrcOut
-
-
     );
 
 
