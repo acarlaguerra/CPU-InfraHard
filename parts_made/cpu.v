@@ -49,15 +49,10 @@ module cpu (
     wire [1:0]  LSCtrl; //coloquei o tamanho
     wire [1:0]  SSCtrl; //coloquei o tamanho
 
-// control wires mult
-
-
-
-
-
-// control wires div
-
-
+// control wires mult and div   //add multStop e DivStop
+    wire  MultCtrl;
+    wire  DivCtrl;
+    wire  DivZero;
 
 
 // data wires out from muxes
@@ -104,6 +99,11 @@ module cpu (
     wire [31:0] SE16_32Out; // sign extend 16 - 32
     wire [31:0] SHIFTRegOut;
     wire [31:0] ALUResult;
+
+    wire [31:0]  MultHOut;
+    wire [31:0]  MultLOut;
+    wire [31:0]  DivHOut;
+    wire [31:0]  DivLOut;
 
     wire [25:0] ConcatINSTOut;
     wire [31:0] ConcatIPCOut;
@@ -249,6 +249,29 @@ module cpu (
         SSOut
     );
 
+//MULT
+    mult Mult_(
+        clk,
+        reset,
+        MultCtrl,
+        AOut,
+        BOut,
+        MultHOut,
+        MultLOut
+    );
+
+//DIV
+    div Div_(
+        clk,
+        reset,
+        DivCtrl,
+        AOut,
+        BOut,
+        DivZero,
+        DivHOut,
+        DivLOut       
+    );
+
 // CONCATS
 
     concat_inst concat_inst_(
@@ -310,16 +333,18 @@ module cpu (
         MUXEXCPOut
     );
     
-    mux_LO mux_LO_( //Faltando componentes para completar
+    mux_LO mux_LO_( //componentes completadas
         LOSrc,
-        
+        MultLOut
+        DivLOut
         MUXLOOut
 
     );
 
-    mux_HI mux_HI_( //Faltando componentes para completar
+    mux_HI mux_HI_( //componentes completadas
         HISrc,
-
+        MultHOut
+        DivHOut
         MUXHIOut
     );
 
