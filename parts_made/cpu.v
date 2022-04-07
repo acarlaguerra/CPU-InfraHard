@@ -105,6 +105,8 @@ module cpu (
     wire [31:0] SHIFTRegOut;
     wire [31:0] ALUResult;
 
+    wire [25:0] ConcatINSTOut;
+    wire [31:0] ConcatIPCOut;
 
 // REGS
     Registrador PC_ (
@@ -247,7 +249,37 @@ module cpu (
         SSOut
     );
 
+// CONCATS
 
+    concat_inst concat_inst_(
+         rs,
+         rt,
+         IMMEDIATE,
+         ConcatINSTOut
+    );
+
+    concat_IPC concat_IPC_(
+        SL26_28Out,
+        PCOut,
+        ConcatIPCOut
+    );
+
+// SHIFTS
+
+    shift_left26 shift_left26_(
+        ConcatINSTOut,
+        SL26_28Out
+    );
+
+    shift_left16 shift_left16_(
+        IMMEDIATE,
+        SL16Out;
+    );
+
+    shift_left2 shift_left2_(
+        SE16_32Out,
+        SL2Out,   
+    );
 
     // MUXES
     //mux_IorD

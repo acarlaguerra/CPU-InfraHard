@@ -1,6 +1,6 @@
 //arrive with 16bits and leave with 32bit
 module shift_left16(
-    input   wire    [15:0]  Data_in,
+    input   wire    [15:0]  Data_in, // IMMEDIATE
     output  wire    [31:0]  Data_out
 );
     // shift left 16

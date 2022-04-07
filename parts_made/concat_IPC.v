@@ -2,8 +2,8 @@
 // Shift Left 2 with what comes from PC and head to MUX
 
 module concat_IPC(
-    input   wire    [27:0]   Data_Instr,
-    input   wire    [31:0]   Data_PC,
+    input   wire    [27:0]   Data_Instr, // SL26_28Out;
+    input   wire    [31:0]   Data_PC,  
     output  wire    [31:0]   Data_out
 );
 
