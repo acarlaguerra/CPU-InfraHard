@@ -46,8 +46,8 @@ module cpu (
     wire MDRWrite;
 
 //  control wires
-    wire LSCtrl; // nao sei o tamanho ainda
-    wire SSCtrl; // nao sei o tamanho ainda
+    wire [1:0]  LSCtrl; //coloquei o tamanho
+    wire [1:0]  SSCtrl; //coloquei o tamanho
 
 // control wires mult
 
@@ -96,7 +96,7 @@ module cpu (
     wire [31:0] ReadData2Out; // rt
     wire [31:0] MEMOut;
     wire [31:0] SSOut; // STORE SIZE
-    wire [31:0] LSOut; // LL SIZE nao sei como ele eh/ tamanho  
+    wire [31:0] LSOut; // LL SIZE
     wire [31:0] SL16Out; // shift left que vai pro mux wd
     wire [27:0] SL26_28Out; // shift left 26-28
     wire [31:0] SL2Out; // shift left depois do SE 16-32
@@ -230,6 +230,24 @@ module cpu (
         ReadData2Out
     );
       
+// LOAD SIZE
+
+    load_size LSize_(
+        LSCtrl,
+        MDROut,
+        LSOut
+    );
+     
+// STORE SIZE
+
+    store_size SSize_(
+        SSCtrl,
+        MDROut,
+        BOut,
+        SSOut
+    );
+
+
 
     // MUXES
     //mux_IorD
