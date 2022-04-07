@@ -2,7 +2,7 @@
 module mux_LdB (
     input   wire    LoadBMem,
     input   wire    [31:0]  Data_0,     //  REG B
-    input   wire    [31:0]  Data_1,     //  Mem[offset + rs][4-0]
+    input   wire    [31:0]  Data_1,     //  Mem[offset + rs]
     output  wire    [31:0]  Data_out
 );
 

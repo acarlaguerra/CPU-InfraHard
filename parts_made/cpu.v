@@ -28,6 +28,10 @@ module cpu (
     wire HISrc;
     wire [1:0] PCSrc;
 
+// Operations
+    wire [2:0] SHIFTOp;
+    wire [2:0] ALUOp;
+
 //  write wires
     wire PCWrite;
     wire PCWriteCond; // ?
@@ -165,14 +169,42 @@ module cpu (
         EPCOut
     );
 
+// SHIFT REG
+    RegDesloc SHIFTReg_(
+        clk,
+        reset,
+        SHIFTOp,
+        SHIFTAmt,
+        SHIFTSrc,
+        SHIFTRegOut
+    );
 
+// ULA
+    ula32 ALU_(
+        MUXALUSrcAOut,
+        MUXALUSrcBOut,
+        ALUOp,
+        ALUResult,
+        overflow,
+        NG,
+        zero,
+        EQ,
+        GT,
+        LT
+    );
 
+// MEMORY
+
+    Memoria MEM_(
+        MUXIorDOut,
+        clk,
+        MemWrite,
+        SSOut,
+        MEMOut
+    );
 
       
      
-
-
-
 
 
 

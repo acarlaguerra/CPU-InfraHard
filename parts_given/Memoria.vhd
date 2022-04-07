@@ -69,8 +69,8 @@ ENTITY Memoria IS
 		Address	: IN  STD_LOGIC_VECTOR(31 DOWNTO 0);	-- Endere�o de mem�ria a ser lido
 		Clock	: IN  STD_LOGIC;						-- Clock do sistema
 		Wr		: IN  STD_LOGIC;						-- Indica se a mem�ria ser� lida (0) ou escrita (1)
-		Datain	: IN  STD_LOGIC_VECTOR(31 DOWNTO 0);	-- Valor lido da mem�ria quando Wr = 0
-		Dataout	: OUT STD_LOGIC_VECTOR(31 DOWNTO 0)		-- Valor a ser escrito quando Wr = 1
+		Datain	: IN  STD_LOGIC_VECTOR(31 DOWNTO 0);	-- Valor a ser escrito quando Wr = 1
+		Dataout	: OUT STD_LOGIC_VECTOR(31 DOWNTO 0)		-- Valor lido da mem�ria quando Wr = 0
    );
 END Memoria;
 
