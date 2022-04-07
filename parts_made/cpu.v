@@ -305,6 +305,11 @@ module cpu (
         MUXIorDOut
     );
     
+    mux_Except mux_Except_(
+        EXCPCtrl,
+        MUXEXCPOut
+    );
+    
     mux_LO mux_LO_( //Faltando componentes para completar
         LOSrc,
         
@@ -351,16 +356,16 @@ module cpu (
         MUXLoadBOut
     );
 
-    mux_Sa mux_Sa_( //Completo - Falta revisar
+    mux_Sa mux_Sa_(
         SHIFTAmt,
-        BOut[4:0],
-        MDROut[4:0],
-        IMMEDIATE[10:6],
+        BOut,
+        IMMEDIATE,
+        MDROut,
         MUXSHIFTAmtOut
     );
 
 
-    mux_Src mux_Src_( //Completo - Falta revisar
+    mux_Src mux_Src_( 
         SHIFTSrc,
         BOut,
         AOUt,
@@ -390,7 +395,6 @@ module cpu (
         EPCOut,
         MUXPCSrcOut
     );
-
 
 
 

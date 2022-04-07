@@ -3,7 +3,7 @@ module mux_wr(
     input wire [4:0] Data_0, //RT
 //  input wire [4:0] Data_1 // sp
 //  input wire [4:0] Data_2 // ra
-    input wire [15:0] Data_3, //IMMEDIATE 
+    input wire [15:0] Data_3, //IMMEDIATE (rd)
     output wire [4:0] Data_out
    
 );
@@ -21,7 +21,7 @@ module mux_wr(
 
 
     assign out1 = (Selector[0]) ? sp : Data_0;
-    assign out2 = (Selector[0]) ? Data_3[15-11] : ra;
+    assign out2 = (Selector[0]) ? Data_3[15:11] : ra;
     assign Data_out = (Selector[1]) ? out2 : out1;
 
     
