@@ -57,19 +57,19 @@ module cpu (
 
 
 // data wires out from muxes
-    wire [31:0] IorDOut;
-    wire [4:0] RegDstOut;
-    wire [31:0] DataSrcOut;
-    wire [31:0] EXCPOut;
-    wire [31:0] LoadAOut;
-    wire [31:0] LoadBOut;
-    wire [31:0] ALUSrcAOut;
-    wire [31:0] ALUSrcBOut;
-    wire [31:0] LOOut;
-    wire [31:0] HIOut;
-    wire [4:0] SHIFTAmtOut;
-    wire [31:0] SHIFTSrcOut;
-    wire [31:0] PCSrcOut;
+    wire [31:0] MUXIorDOut;
+    wire [4:0] MUXRegDstOut;
+    wire [31:0] MUXDataSrcOut;
+    wire [31:0] MUXEXCPOut;
+    wire [31:0] MUXLoadAOut;
+    wire [31:0] MUXLoadBOut;
+    wire [31:0] MUXALUSrcAOut;
+    wire [31:0] MUXALUSrcBOut;
+    wire [31:0] MUXLOOut;
+    wire [31:0] MUXHIOut;
+    wire [4:0] MUXSHIFTAmtOut;
+    wire [31:0] MUXSHIFTSrcOut;
+    wire [31:0] MUXPCSrcOut;
 
 // data wires out from regs
     wire [31:0] PCOut;
@@ -90,7 +90,7 @@ module cpu (
 //
     wire [31:0] MEMOut;
     wire [31:0] SSOut; // STORE SIZE
-    wire LSOut; // LL SIZE nao sei como ele eh/ tamanho  
+    wire [31:0] LSOut; // LL SIZE nao sei como ele eh/ tamanho  
     wire [31:0] SL16Out; // shift left que vai pro mux wd
     wire [27:0] SL26_28Out; // shift left 26-28
     wire [31:0] SL2Out; // shift left depois do SE 16-32
@@ -98,25 +98,73 @@ module cpu (
     wire [31:0] SE16_32Out; // sign extend 16 - 32
     wire [31:0] SHIFTRegOut;
     wire [31:0] ALUResult;
-    // REGS
+
+
+// REGS
     Registrador PC_ (
         clk,
         reset,
         PCWrite,
-        PCSrcOut,
+        MUXPCSrcOut,
         PCOut
     );
-    
-
-
-
-    // MUXES
-    mux_IorD mux_IorD_(
-        IorD, // selector
-        PCOut,
-        EXCPOut,
-
+ 
+    Registrador MDR_(
+        clk,
+        reset,
+        MDRWrite,
+        MEMOut,
+        MDROut
     );
+
+    Registrador HI_(
+        clk,
+        reset,
+        HILOWrite,
+        MUXHIOut,
+        HIOut        
+    );
+
+    Registrador LO_(
+        clk,
+        reset,
+        HILOWrite,
+        MUXLOOut,
+        LOOut        
+    );
+
+    Registrador A_(
+        clk,
+        reset,
+        RegAWrite,
+        MUXLoadAOut,
+        AOut
+    );
+
+    Registrador B_(
+        clk,
+        reset,
+        RegBWrite,
+        MUXLoadBOut,
+        BOut
+    );
+
+    Registrador ALUOut_(
+        clk,
+        reset,
+        ALUOutWrite,
+        ALUResult,
+        ALUOutOut
+    );
+
+    Registrador EPC_(
+        clk,
+        reset,
+        EPCWrite,
+        ALUResult,
+        EPCOut
+    );
+
 
 
 
