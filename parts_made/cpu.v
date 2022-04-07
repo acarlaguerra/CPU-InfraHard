@@ -92,6 +92,8 @@ module cpu (
     wire [4:0] RT;
     wire [15:0] IMMEDIATE;
 //
+    wire [31:0] ReadData1Out; // rs
+    wire [31:0] ReadData2Out; // rt
     wire [31:0] MEMOut;
     wire [31:0] SSOut; // STORE SIZE
     wire [31:0] LSOut; // LL SIZE nao sei como ele eh/ tamanho  
@@ -203,6 +205,30 @@ module cpu (
         MEMOut
     );
 
+// IR
+    Instr_Reg IR_(
+        clk,
+        reset,
+        IRWrite,
+        MEMOut,
+        OPCODE,
+        rs,
+        rt,
+        IMMEDIATE
+    );
+
+// REGISTER BANK
+    Banco_reg REGS_(
+        clk,
+        reset,
+        RegWrite,
+        rs,
+        rt,
+        MUXRegDstOut,
+        MUXDataSrcOut,
+        ReadData1Out,
+        ReadData2Out
+    );
       
      
 
