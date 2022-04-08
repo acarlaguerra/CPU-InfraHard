@@ -43,8 +43,7 @@ module cpu (
     wire ALUOutWrite;
     wire EPCWrite;
     wire HILOWrite;
-    wire RegAWrite;
-    wire RegBWrite; 
+    wire RegABWrite;
     wire MDRWrite;
 
     //assign PCWrite = PCWrite | PCWriteCond;
@@ -74,7 +73,7 @@ module cpu (
     wire [31:0] PCOut;
     wire [31:0] HIOut;
     wire [31:0] LOOut;
-    wire [31:0] AOUt;
+    wire [31:0] AOut;
     wire [31:0] BOut;
     wire [31:0] ALUOutOut;
     wire [31:0] MDROut;
@@ -144,7 +143,7 @@ module cpu (
     Registrador A_(
         clk,
         reset,
-        RegAWrite,
+        RegABWrite,
         MUXLoadAOut,
         AOut
     );
@@ -152,7 +151,7 @@ module cpu (
     Registrador B_(
         clk,
         reset,
-        RegBWrite,
+        RegABWrite,
         MUXLoadBOut,
         BOut
     );
@@ -323,7 +322,7 @@ module cpu (
         EXCPOut,
         ALUResult,
         ALUOutOut,
-        AOUt,
+        AOut,
         BOut,
         MUXIorDOut
     );
@@ -392,7 +391,7 @@ module cpu (
     mux_Src mux_Src_( 
         SHIFTSrc,
         BOut,
-        AOUt,
+        AOut,
         MUXSHIFTSrcOut
     );
 
@@ -460,8 +459,7 @@ module cpu (
         ALUOutWrite,
         EPCWrite,
         HILOWrite,
-        RegAWrite,
-        RegBWrite,
+        RegABWrite,
         MDRWrite
     );
 

@@ -51,8 +51,7 @@ module control_unit(
     output wire ALUOutWrite,
     output wire EPCWrite,
     output wire HILOWrite,
-    output wire RegAWrite,
-    output wire RegBWrite, 
+    output wire RegABWrite,
     output wire MDRWrite
 
 );
@@ -62,6 +61,8 @@ parameter FETCH1 = 7'd0;
 parameter FETCH2 = 7'd1;
 parameter DECODE1 = 7'd2;
 parameter DECODE2 = 7'd3;
+
+parameter ALUOUTRD = 7'd10;
 parameter UNEXOPCODE = 7'd40 // valor temporario
 parameter EXECUTE = 7'd50; // valor temporario
 //declarar todos estados aqui e tal
@@ -180,29 +181,31 @@ always @(posedge clk) begin
             // outros estados aqui
         
             EXECUTE: begin
+                RegAWrite = 0;
+                RegBWrite = 0;
                 case(OPCODE)
                     // R FORMAT //
                     OPCODEZero: begin 
                         case(funct)
                                 ADD: begin
                                     // controles ADD
-                                    LoadAMem = 2'd0;
-                                    LoadBMem = 2'd0;
+                                    LoadAMem = 0;
+                                    LoadBMem = 0;
                                     ALUSrcA = 2'd2;
                                     ALUSrcB = 2'd0;
                                     ALUOp = 3'b001;
                                     ALUOutWrite = 1;
-                                    STATE = Store;
+                                    STATE = ALUOUTRD;
                                 end
                                 AND: begin
                                     // controles AND
-                                    LoadAMem = 2'd0;
-                                    LoadBMem = 2'd0;
+                                    LoadAMem = 0;
+                                    LoadBMem = 0;
                                     ALUSrcA = 2'd2;
                                     ALUSrcB = 2'd0;
                                     ALUOp = 3'b011;
                                     ALUOutWrite = 1;
-                                    STATE = Store;
+                                    STATE = ALUOUTRD;
                                 end
                                 DIV: begin
                                     // controles DIV
@@ -239,13 +242,13 @@ always @(posedge clk) begin
                                 end
                                 SUB: begin
                                     // controles SUB
-                                    LoadAMem = 2'd0;
-                                    LoadBMem = 2'd0;
+                                    LoadAMem = 0;
+                                    LoadBMem = 0;
                                     ALUSrcA = 2'd2;
                                     ALUSrcB = 2'd0;
                                     ALUOp = 3'010;
                                     ALUOutWrite = 1;
-                                    STATE = Store;
+                                    STATE = ALUOUTRD;
                                 end
                                 BREAK: begin
                                     // controles BREAK
