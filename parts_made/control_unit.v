@@ -116,7 +116,39 @@ end
 
 always @(posedge clk) begin
     if(reset == 1'b1) begin
-        
+      STATE = FETCH1
+      PCWrite      = 0;
+      //PCWriteCond  = 0;
+      MemWrite     = 0;
+      IRWrite      = 0;
+      RegWrite     = 1;  ///
+      ALUOutWrite  = 0;
+      EPCWrite     = 0;
+      HILOWrite    = 0;
+      RegAWrite    = 0;
+      RegBWrite    = 0;
+      MDRWrite     = 0;
+      
+      ALUOp        = 3'b000;
+      SHIFTOp      = 3'b000;
+      SSCtrl       = 2'b00;
+      LSCtrl       = 2'b00;
+      MultCtrl     = 0;
+      DivCtrl      = 0;
+      
+      IorD         = 3'b000;
+      EXCPCtrl     = 2'b00;
+      RegDst       = 2'b01;   /// // gets 29 ($sp)
+      DataSrc      = 4'b0100; /// // gets 227
+      LoadAMem     = 0;
+      LoadBMem     = 0;
+      SHIFTAmt     = 2'b00;;
+      SHIFTSrc     = 0;
+      ALUSrcA      = 2'b00;
+      ALUSrcB      = 2'b00;
+      LOSrc        = 0;
+      HISrc        = 0;
+      PCSrc        = 2'b00;        
     end
     else begin
         case(CURRSTATE)
