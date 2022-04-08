@@ -59,9 +59,11 @@ module control_unit(
 
 //States
 parameter FETCH1 = 7'd0;
-
-parameter UNEXOPCODE = 7'd2 // valor temporario
-parameter EXECUTE = 7'd5; // valor temporario
+parameter FETCH2 = 7'd1;
+parameter DECODE1 = 7'd2;
+parameter DECODE2 = 7'd3;
+parameter UNEXOPCODE = 7'd40 // valor temporario
+parameter EXECUTE = 7'd50; // valor temporario
 //declarar todos estados aqui e tal
 
 //R instructions (funct) -- opcode = 0
@@ -114,14 +116,35 @@ end
 
 always @(posedge clk) begin
     if(reset == 1'b1) begin
-        // fazer reset e tals
+        
     end
     else begin
         case(CURRSTATE)
             FETCH1: begin
-                // fazer fetch1
+                RegWrite = 0;
+                RegDst = 3'd0; // reset to rt
+                DataSrc = 4'd0; // reset to ALUOutOut
+
+                IorD = 3'd0; // PC address
+                MemWrite = 0; // read from mem
+                ALUSrcA = 2'd0; // PC address
+                ALUOp = 3'b001; // +
+                ALUSrcB = 2'd1; // 4
+                PCSrc = 2'd0; // ALUResult
+                PCWrite = 1;
+                CURRSTATE = FETCH2;             
             end
-            
+            FETCH2: begin
+                PCWrite = 0;
+                LSCtrl = 0;
+                SSCtrl = 0;
+                IRWrite = 1;
+                CURRSTATE = DECODE1;
+            end
+            DECODE1: begin
+                    // fazer decode;
+            end
+
             // outros estados aqui
         
             EXECUTE: begin
