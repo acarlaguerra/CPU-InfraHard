@@ -154,9 +154,23 @@ always @(posedge clk) begin
                         case(funct)
                                 ADD: begin
                                     // controles ADD
+                                    LoadAMem = 2'd0;
+                                    LoadBMem = 2'd0;
+                                    ALUSrcA = 2'd2;
+                                    ALUSrcB = 2'd0;
+                                    ALUOp = 3'b001;
+                                    ALUOutWrite = 1;
+                                    STATE = Store;
                                 end
                                 AND: begin
                                     // controles AND
+                                    LoadAMem = 2'd0;
+                                    LoadBMem = 2'd0;
+                                    ALUSrcA = 2'd2;
+                                    ALUSrcB = 2'd0;
+                                    ALUOp = 3'b011;
+                                    ALUOutWrite = 1;
+                                    STATE = Store;
                                 end
                                 DIV: begin
                                     // controles DIV
@@ -193,6 +207,13 @@ always @(posedge clk) begin
                                 end
                                 SUB: begin
                                     // controles SUB
+                                    LoadAMem = 2'd0;
+                                    LoadBMem = 2'd0;
+                                    ALUSrcA = 2'd2;
+                                    ALUSrcB = 2'd0;
+                                    ALUOp = 3'010;
+                                    ALUOutWrite = 1;
+                                    STATE = Store;
                                 end
                                 BREAK: begin
                                     // controles BREAK
