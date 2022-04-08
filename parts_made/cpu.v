@@ -31,6 +31,8 @@ module cpu (
 // Operations
     wire [2:0] SHIFTOp;
     wire [2:0] ALUOp;
+    wire [1:0]  LSCtrl;
+    wire [1:0]  SSCtrl; 
 
 //  write wires
     wire PCWrite;
@@ -45,9 +47,6 @@ module cpu (
     wire RegBWrite; 
     wire MDRWrite;
 
-//  control wires
-    wire [1:0]  LSCtrl; //coloquei o tamanho
-    wire [1:0]  SSCtrl; //coloquei o tamanho
 
 // control wires mult and div   //add multStop e DivStop
     wire  MultCtrl;
