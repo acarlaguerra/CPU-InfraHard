@@ -333,18 +333,17 @@ module cpu (
         MUXEXCPOut
     );
     
-    mux_LO mux_LO_( //componentes completadas
+    mux_LO mux_LO_(
         LOSrc,
-        MultLOut
-        DivLOut
+        MultLOut,
+        DivLOut,
         MUXLOOut
-
     );
 
-    mux_HI mux_HI_( //componentes completadas
+    mux_HI mux_HI_( 
         HISrc,
-        MultHOut
-        DivHOut
+        MultHOut,
+        DivHOut,
         MUXHIOut
     );
 
