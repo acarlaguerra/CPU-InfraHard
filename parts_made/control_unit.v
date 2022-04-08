@@ -53,6 +53,8 @@ module control_unit(
     output wire HILOWrite,
     output wire RegAWrite,
     output wire RegBWrite, 
-    output wire MDRWrite,
+    output wire MDRWrite
 
 );
+
+endmodule

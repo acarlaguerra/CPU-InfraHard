@@ -47,6 +47,7 @@ module cpu (
     wire RegBWrite; 
     wire MDRWrite;
 
+    //assign PCWrite = PCWrite | PCWriteCond;
 
 // control wires mult and div   //add multStop e DivStop
     wire  MultCtrl;
@@ -417,6 +418,51 @@ module cpu (
         ConcatIPCOut,
         EPCOut,
         MUXPCSrcOut
+    );
+// CTRL UNIT
+    control_unit control_unit_(
+        clk,
+        reset,
+        overflow,
+        EQ,
+        GT,
+        zero,
+        NG,
+        DivZero,
+        //DivStop,
+        //multStop,
+        OPCODE,
+        funct,
+        ALUOp,
+        SHIFTOp,
+        SSCtrl,
+        LSCtrl,
+        MultCtrl,
+        DivCtrl,
+        IorD,
+        EXCPCtrl,
+        RegDst,
+        DataSrc,
+        LoadAMem,
+        LoadBMem,
+        SHIFTAmt,
+        SHIFTSrc,
+        ALUSrcA,
+        ALUSrcB,
+        LOSrc,
+        HISrc,
+        PCSrc,
+        PCWrite,
+        PCWriteCond, // ?
+        MemWrite,
+        IRWrite,
+        RegWrite,
+        ALUOutWrite,
+        EPCWrite,
+        HILOWrite,
+        RegAWrite,
+        RegBWrite,
+        MDRWrite
     );
 
 
