@@ -317,7 +317,7 @@ module cpu (
     mux_IorD mux_IorD_( 
         IorD, 
         PCOut,
-        EXCPOut,
+        MUXEXCPOut,
         ALUResult,
         ALUOutOut,
         AOut,
