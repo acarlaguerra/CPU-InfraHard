@@ -36,7 +36,6 @@ module cpu (
 
 //  write wires
     wire PCWrite;
-    wire PCWriteCond; // ?
     wire MemWrite;
     wire IRWrite;
     wire RegWrite;
@@ -46,7 +45,6 @@ module cpu (
     wire RegABWrite;
     wire MDRWrite;
 
-    //assign PCWrite = PCWrite | PCWriteCond;
 
 // control wires mult and div   //add multStop e DivStop
     wire  MultCtrl;
@@ -452,7 +450,6 @@ module cpu (
         HISrc,
         PCSrc,
         PCWrite,
-        PCWriteCond, // ?
         MemWrite,
         IRWrite,
         RegWrite,

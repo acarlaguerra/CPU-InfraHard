@@ -65,6 +65,7 @@ parameter DECODE2 = 7'd3;
 parameter ALUOUTRD = 7'd10;
 parameter UNEXOPCODE = 7'd40 // valor temporario
 parameter EXECUTE = 7'd50; // valor temporario
+parameter END = 7'd60; //
 //declarar todos estados aqui e tal
 
 //R instructions (funct) -- opcode = 0
@@ -126,8 +127,7 @@ always @(posedge clk) begin
       ALUOutWrite  = 0;
       EPCWrite     = 0;
       HILOWrite    = 0;
-      RegAWrite    = 0;
-      RegBWrite    = 0;
+      RegABWrite   = 0;   
       MDRWrite     = 0;
       
       ALUOp        = 3'b000;
@@ -174,38 +174,39 @@ always @(posedge clk) begin
                 IRWrite = 1;
                 CURRSTATE = DECODE1;
             end
-            DECODE1: begin
-                    // fazer decode;
+            DECODE1: begin // branch
+                IRWrite = 0;
+                ALUSrcA = 2'd0; // PC
+                ALUSrcB = 2'd3; // ADDRESS << 2
+                ALUOp = 3'b001; // +
+                ALUOutWrite = 1;
+                CURRSTATE = DECODE2; 
             end
-
-            // outros estados aqui
-        
+            DECODE2: begin // A <= rs, B <= rt
+                LoadAMem = 0;
+                LoadBMem = 0;
+                RegABWrite = 1;
+                CURRSTATE = EXECUTE;
+            end
             EXECUTE: begin
-                RegAWrite = 0;
-                RegBWrite = 0;
+                RegABWrite = 0; 
                 case(OPCODE)
                     // R FORMAT //
                     OPCODEZero: begin 
                         case(funct)
-                                ADD: begin
-                                    // controles ADD
-                                    LoadAMem = 0;
-                                    LoadBMem = 0;
-                                    ALUSrcA = 2'd2;
-                                    ALUSrcB = 2'd0;
-                                    ALUOp = 3'b001;
+                                ADD: begin // rd <= rs + rt
+                                    ALUSrcA = 2'd2; // rs
+                                    ALUSrcB = 2'd0; // rt
+                                    ALUOp = 3'b001; // +
                                     ALUOutWrite = 1;
-                                    STATE = ALUOUTRD;
+                                    CURRSTATE = ALUOUTRD;
                                 end
-                                AND: begin
-                                    // controles AND
-                                    LoadAMem = 0;
-                                    LoadBMem = 0;
-                                    ALUSrcA = 2'd2;
-                                    ALUSrcB = 2'd0;
-                                    ALUOp = 3'b011;
+                                AND: begin // rd <= rs & rt
+                                    ALUSrcA = 2'd2; // rs
+                                    ALUSrcB = 2'd0; // rt
+                                    ALUOp = 3'b011; // &
                                     ALUOutWrite = 1;
-                                    STATE = ALUOUTRD;
+                                    CURRSTATE = ALUOUTRD;
                                 end
                                 DIV: begin
                                     // controles DIV
@@ -213,14 +214,24 @@ always @(posedge clk) begin
                                 MULT: begin
                                     // controles MULT
                                 end
-                                JR: begin
-                                    // controles JR
+                                JR: begin  // PC <= rs
+                                    ALUSrcA = 2'd2; // rs
+                                    ALUOp = 3'b000; // LOAD
+                                    PCSrc = 2'd0;
+                                    PCWrite = 1;
+                                    CURRSTATE = END;
                                 end
-                                MFHI: begin
-                                    // controles MFHI
+                                MFHI: begin // rd <= hi
+                                    DataSrc = 3'd2; // HI
+                                    RegDst =  2'd3; // rd
+                                    RegWrite = 1;
+                                    CURRSTATE = END;
                                 end 
-                                MFLO: begin
-                                    // controles MFLO
+                                MFLO: begin // rd <= lo
+                                    DataSrc = 3'd3; // LO
+                                    RegDst =  2'd3; // rd
+                                    RegWrite = 1;
+                                    CURRSTATE = END; 
                                 end
                                 SLL: begin
                                     // controles SLL
@@ -230,6 +241,12 @@ always @(posedge clk) begin
                                 end  
                                 SLT: begin
                                     // controles SLT
+                                    ALUSrcA = 2'd2;
+                                    ALUSrcB = 2'd0;
+                                    ALUOp = 3'b111;
+                                    DataSrc = 3'd6;
+                                    RegDst = 2'd0;
+                                    RegWrite = 1;
                                 end                                                                                                      
                                 SRA: begin
                                     // controles SRA
@@ -241,20 +258,23 @@ always @(posedge clk) begin
                                     // controles SRL
                                 end
                                 SUB: begin
-                                    // controles SUB
-                                    LoadAMem = 0;
-                                    LoadBMem = 0;
-                                    ALUSrcA = 2'd2;
-                                    ALUSrcB = 2'd0;
-                                    ALUOp = 3'010;
+                                    ALUSrcA = 2'd2; // rs
+                                    ALUSrcB = 2'd0; // rt
+                                    ALUOp = 3'b010; // -
                                     ALUOutWrite = 1;
-                                    STATE = ALUOUTRD;
+                                    CURRSTATE = ALUOUTRD;
                                 end
-                                BREAK: begin
-                                    // controles BREAK
+                                BREAK: begin // PC dont change
+                                    ALUSrcA = 2'd1;
+                                    ALUSrcB = 2'd1;
+                                    ALUOp = 3'b010;
+                                    PCSrc = 2'd0;
+                                    PCWrite = 1;
                                 end
-                                RTE: begin
-                                    // controles RTE
+                                RTE: begin // PC <= EPC
+                                    PCSrc = 2'd3; // EPC
+                                    PCWrite = 1;
+                                    CURRSTATE = END;
                                 end
                                 ADDM: begin
                                     // controles ADDM
@@ -263,11 +283,15 @@ always @(posedge clk) begin
                     end
 
                     // J FORMAT //
-                    J: begin
-                        // controles J
+                    J: begin 
+                        PCSrc = 2'd2; // ConcatIPCOut
+                        PCWrite = 1;
+                        CURRSTATE = END;
                     end 
                     JAL: begin
                         // controles JAL
+                        ALUSrcA = 2'd0;
+                        
                     end                   
 
                     // I FORMAT //
@@ -319,9 +343,52 @@ always @(posedge clk) begin
 
                     // OPCODE inexistente
                     default: begin
-                        STATE = UNEXOPCODE;
+                        CURRSTATE = UNEXOPCODE;
                     end
                 endcase
+            end
+            ALUOUTRD: begin
+                // overflow
+                ALUOutWrite = 0;
+                RegDst = 3'd3; // rd
+                DataSrc = 4'd0; // ALUOut 
+                RegWrite = 1;
+                CURRSTATE = END; 
+            end
+
+            END: begin // close wires
+                STATE = FETCH1
+                PCWrite      = 0;
+                //PCWriteCond  = 0;
+                MemWrite     = 0;
+                IRWrite      = 0;
+                RegWrite     = 0;  ///
+                ALUOutWrite  = 0;
+                EPCWrite     = 0;
+                HILOWrite    = 0;
+                RegABWrite   = 0;   
+                MDRWrite     = 0;
+                
+                ALUOp        = 3'b000;
+                SHIFTOp      = 3'b000;
+                SSCtrl       = 2'b00;
+                LSCtrl       = 2'b00;
+                MultCtrl     = 0;
+                DivCtrl      = 0;
+                
+                IorD         = 3'b000;
+                EXCPCtrl     = 2'b00;
+                RegDst       = 2'b01;   /// // gets 29 ($sp)
+                DataSrc      = 4'b0100; /// // gets 227
+                LoadAMem     = 0;
+                LoadBMem     = 0;
+                SHIFTAmt     = 2'b00;;
+                SHIFTSrc     = 0;
+                ALUSrcA      = 2'b00;
+                ALUSrcB      = 2'b00;
+                LOSrc        = 0;
+                HISrc        = 0;
+                PCSrc        = 2'b00;        
             end
 
         endcase
