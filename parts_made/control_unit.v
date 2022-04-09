@@ -20,39 +20,38 @@ module control_unit(
     input wire [5:0] funct,
 // output
     // operations 
-    output wire [2:0] ALUOp,
-    output wire [2:0] SHIFTOp,
-    output wire [1:0] SSCtrl,
-    output wire [1:0] LSCtrl,
-    output wire  MultCtrl,
-    output wire  DivCtrl,
+    output reg [2:0] ALUOp,
+    output reg [2:0] SHIFTOp,
+    output reg [1:0] SSCtrl,
+    output reg [1:0] LSCtrl,
+    output reg  MultCtrl,
+    output reg  DivCtrl,
 
     // selectors muxes
-    output wire [2:0] IorD, 
-    output wire [1:0] EXCPCtrl,
-    output wire [1:0] RegDst,
-    output wire [3:0] DataSrc,
-    output wire LoadAMem,
-    output wire LoadBMem,
-    output wire [1:0] SHIFTAmt,
-    output wire SHIFTSrc,
-    output wire [1:0] ALUSrcA,
-    output wire [1:0] ALUSrcB, 
-    output wire LOSrc,
-    output wire HISrc,
-    output wire [1:0] PCSrc,
+    output reg [2:0] IorD, 
+    output reg [1:0] EXCPCtrl,
+    output reg [1:0] RegDst,
+    output reg [3:0] DataSrc,
+    output reg LoadAMem,
+    output reg LoadBMem,
+    output reg [1:0] SHIFTAmt,
+    output reg SHIFTSrc,
+    output reg [1:0] ALUSrcA,
+    output reg [1:0] ALUSrcB, 
+    output reg LOSrc,
+    output reg HISrc,
+    output reg [1:0] PCSrc,
 
     // regs write
-    output wire PCWrite,
-    output wire PCWriteCond, // ?
-    output wire MemWrite,
-    output wire IRWrite,
-    output wire RegWrite,
-    output wire ALUOutWrite,
-    output wire EPCWrite,
-    output wire HILOWrite,
-    output wire RegABWrite,
-    output wire MDRWrite
+    output reg PCWrite,
+    output reg MemWrite,
+    output reg IRWrite,
+    output reg RegWrite,
+    output reg ALUOutWrite,
+    output reg EPCWrite,
+    output reg HILOWrite,
+    output reg RegABWrite,
+    output reg MDRWrite
 
 );
 
@@ -63,7 +62,7 @@ parameter DECODE1 = 7'd2;
 parameter DECODE2 = 7'd3;
 
 parameter ALUOUTRD = 7'd10;
-parameter UNEXOPCODE = 7'd40 // valor temporario
+parameter UNEXOPCODE = 7'd40; // valor temporario
 parameter EXECUTE = 7'd50; // valor temporario
 parameter END = 7'd60; //
 //declarar todos estados aqui e tal
@@ -118,9 +117,7 @@ end
 
 always @(posedge clk) begin
     if(reset == 1'b1) begin
-      STATE = FETCH1
       PCWrite      = 0;
-      //PCWriteCond  = 0;
       MemWrite     = 0;
       IRWrite      = 0;
       RegWrite     = 1;  ///
@@ -137,25 +134,26 @@ always @(posedge clk) begin
       MultCtrl     = 0;
       DivCtrl      = 0;
       
-      IorD         = 3'b000;
-      EXCPCtrl     = 2'b00;
-      RegDst       = 2'b01;   /// // gets 29 ($sp)
-      DataSrc      = 4'b0100; /// // gets 227
+      IorD         = 3'd0;
+      EXCPCtrl     = 2'd0;
+      RegDst       = 2'd1;   /// // gets 29 ($sp)
+      DataSrc      = 4'd4; /// // gets 227
       LoadAMem     = 0;
       LoadBMem     = 0;
-      SHIFTAmt     = 2'b00;;
+      SHIFTAmt     = 2'd0;
       SHIFTSrc     = 0;
-      ALUSrcA      = 2'b00;
-      ALUSrcB      = 2'b00;
+      ALUSrcA      = 2'd0;
+      ALUSrcB      = 2'd0;
       LOSrc        = 0;
       HISrc        = 0;
-      PCSrc        = 2'b00;        
+      PCSrc        = 2'd0;
+      CURRSTATE = FETCH1;        
     end
     else begin
         case(CURRSTATE)
             FETCH1: begin
                 RegWrite = 0;
-                RegDst = 3'd0; // reset to rt
+                RegDst = 2'd0; // reset to rt
                 DataSrc = 4'd0; // reset to ALUOutOut
 
                 IorD = 3'd0; // PC address
@@ -291,6 +289,7 @@ always @(posedge clk) begin
                     JAL: begin
                         // controles JAL
                         ALUSrcA = 2'd0;
+                        ALUOutWrite = 1;
                         
                     end                   
 
@@ -350,16 +349,14 @@ always @(posedge clk) begin
             ALUOUTRD: begin
                 // overflow
                 ALUOutWrite = 0;
-                RegDst = 3'd3; // rd
+                RegDst = 2'd3; // rd
                 DataSrc = 4'd0; // ALUOut 
                 RegWrite = 1;
                 CURRSTATE = END; 
             end
 
             END: begin // close wires
-                STATE = FETCH1
                 PCWrite      = 0;
-                //PCWriteCond  = 0;
                 MemWrite     = 0;
                 IRWrite      = 0;
                 RegWrite     = 0;  ///
@@ -378,17 +375,18 @@ always @(posedge clk) begin
                 
                 IorD         = 3'b000;
                 EXCPCtrl     = 2'b00;
-                RegDst       = 2'b01;   /// // gets 29 ($sp)
-                DataSrc      = 4'b0100; /// // gets 227
+                RegDst       = 2'b00;   /// 
+                DataSrc      = 4'b0000; /// 
                 LoadAMem     = 0;
                 LoadBMem     = 0;
-                SHIFTAmt     = 2'b00;;
+                SHIFTAmt     = 2'b00;
                 SHIFTSrc     = 0;
                 ALUSrcA      = 2'b00;
                 ALUSrcB      = 2'b00;
                 LOSrc        = 0;
                 HISrc        = 0;
-                PCSrc        = 2'b00;        
+                PCSrc        = 2'b00;
+                CURRSTATE = FETCH1;        
             end
 
         endcase
