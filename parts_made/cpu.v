@@ -42,7 +42,9 @@ module cpu (
     wire ALUOutWrite;
     wire EPCWrite;
     wire HILOWrite;
-    wire RegABWrite;
+    //wire RegAWrite and RegBWrite;
+    wire RegAWrite;
+    wire RegBWrite;
     wire MDRWrite;
 
 
@@ -141,7 +143,7 @@ module cpu (
     Registrador A_(
         clk,
         reset,
-        RegABWrite,
+        RegAWrite,  ///
         MUXLoadAOut,
         AOut
     );
@@ -149,7 +151,7 @@ module cpu (
     Registrador B_(
         clk,
         reset,
-        RegABWrite,
+        RegBWrite,  ///
         MUXLoadBOut,
         BOut
     );
@@ -458,7 +460,8 @@ module cpu (
         ALUOutWrite,
         EPCWrite,
         HILOWrite,
-        RegABWrite,
+        RegAWrite,  ///
+        RegBWrite,  ///
         MDRWrite
     );
 
