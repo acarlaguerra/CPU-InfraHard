@@ -64,6 +64,11 @@ parameter DECODE2 = 7'd3;
 parameter ALUOUTRD = 7'd10;
 parameter UNEXOPCODE = 7'd40; // valor temporario
 parameter EXECUTE = 7'd50; // valor temporario
+parameter BEQ2 = 7'd56;
+parameter BNE2 = 7'd57;
+parameter BLE2 = 7'd58;
+parameter BGT2 = 7'd59;
+
 parameter END = 7'd60; //
 //declarar todos estados aqui e tal
 
@@ -301,16 +306,28 @@ always @(posedge clk) begin
                         // controles ADDIU
                     end
                     BEQ: begin
-                        // controles BEQ
+                        ALUSrcA = 2'd2; // rs
+                        ALUSrcB = 2'd0; // rt
+                        ALUOp = 3'b111; // Compare
+                        CURRSTATE = BEQ2;
                     end
                     BNE: begin
-                        // controles BNE
+                        ALUSrcA = 2'd2; // rs
+                        ALUSrcB = 2'd0; // rt
+                        ALUOp = 3'b111; // Compare
+                        CURRSTATE = BNE2;
                     end
                     BLE: begin
-                        // controles BLE
+                        ALUSrcA = 2'd2; // rs
+                        ALUSrcB = 2'd0; // rt
+                        ALUOp = 3'b111; // Compare
+                        CURRSTATE = BLE2;
                     end
                     BGT: begin
-                        // controles BGT
+                        ALUSrcA = 2'd2; // rs
+                        ALUSrcB = 2'd0; // rt
+                        ALUOp = 3'b111; // Compare
+                        CURRSTATE = BGT2;
                     end
                     SLLM: begin
                         // controles SLLM
@@ -353,6 +370,34 @@ always @(posedge clk) begin
                 DataSrc = 4'd0; // ALUOut 
                 RegWrite = 1;
                 CURRSTATE = END; 
+            end
+            BEQ2: begin
+                if (ET == 1) begin
+                    PCSrc = 2'd1;
+                    PCWrite = 1;                
+                end    
+                CURRSTATE = END;
+            end
+            BNE2: begin
+                if (ET == 0) begin
+                    PCSrc = 2'd1;
+                    PCWrite = 1;                                    
+                end
+                CURRSTATE = END;
+            end
+            BLE2: begin
+                if(GT == 0) begin
+                    PCSrc = 2'd1;
+                    PCWrite = 1;                    
+                end
+                CURRSTATE = END;
+            end
+            BGT2: begin
+                if(GT == 1) begin
+                    PCSrc = 2'd1;
+                    PCWrite = 1;
+                end
+                CURRSTATE = END;
             end
 
             END: begin // close wires

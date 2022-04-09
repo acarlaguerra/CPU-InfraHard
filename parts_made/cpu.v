@@ -175,8 +175,8 @@ module cpu (
         clk,
         reset,
         SHIFTOp,
-        SHIFTAmt,
-        SHIFTSrc,
+        MUXSHIFTAmtOut,
+        MUXSHIFTSrcOut,
         SHIFTRegOut
     );
 
@@ -211,8 +211,8 @@ module cpu (
         IRWrite,
         MEMOut,
         OPCODE,
-        rs,
-        rt,
+        RS,
+        RT,
         IMMEDIATE
     );
 
@@ -221,8 +221,8 @@ module cpu (
         clk,
         reset,
         RegWrite,
-        rs,
-        rt,
+        RS,
+        RT,
         MUXRegDstOut,
         MUXDataSrcOut,
         ReadData1Out,
@@ -272,8 +272,8 @@ module cpu (
 // CONCATS
 
     concat_inst concat_inst_(
-         rs,
-         rt,
+         RS,
+         RT,
          IMMEDIATE,
          ConcatINSTOut
     );
@@ -298,7 +298,7 @@ module cpu (
 
     shift_left2 shift_left2_(
         SE16_32Out,
-        SL2Out,   
+        SL2Out   
     );
 
 // SIGN EXTENDS
