@@ -410,7 +410,6 @@ module cpu (
 
     mux_pc mux_pc_( 
         PCSrc,
-        ALUResult, 
         ALUOutOut,
         ConcatIPCOut,
         EPCOut,

@@ -58,12 +58,14 @@ module control_unit(
 //States
 parameter FETCH1 = 7'd0;
 parameter FETCH2 = 7'd1;
-parameter DECODE1 = 7'd2;
-parameter DECODE2 = 7'd3;
+parameter FETCH3 = 7'd2;
+parameter DECODE1 = 7'd3;
+parameter DECODE2 = 7'd4;
 
 parameter ALUOUTRD = 7'd10;
-parameter UNEXOPCODE = 7'd40; // valor temporario
-parameter EXECUTE = 7'd50; // valor temporario
+parameter SHIFTEND = 7'd11;
+parameter UNEXOPCODE = 7'd40; 
+parameter EXECUTE = 7'd50; 
 parameter BEQ2 = 7'd56;
 parameter BNE2 = 7'd57;
 parameter BLE2 = 7'd58;
@@ -166,11 +168,14 @@ always @(posedge clk) begin
                 ALUSrcA = 2'd0; // PC address
                 ALUOp = 3'b001; // +
                 ALUSrcB = 2'd1; // 4
-                PCSrc = 2'd0; // ALUResult
-                PCWrite = 1;
                 CURRSTATE = FETCH2;             
             end
             FETCH2: begin
+                PCSrc = 2'd0;
+                PCWrite = 1;
+                CURRSTATE = FETCH3;
+            end
+            FETCH3: begin
                 PCWrite = 0;
                 LSCtrl = 0;
                 SSCtrl = 0;
@@ -189,6 +194,7 @@ always @(posedge clk) begin
                 LoadAMem = 0;
                 LoadBMem = 0;
                 RegABWrite = 1;
+                ALUOutWrite = 0;
                 CURRSTATE = EXECUTE;
             end
             EXECUTE: begin
@@ -300,10 +306,19 @@ always @(posedge clk) begin
 
                     // I FORMAT //
                     ADDI: begin
-                        // controles ADDI
+                        ALUSrcA = 2'd2; // rs
+                        ALUSrcB = 2'd2; // rt
+                        ALUOp = 3'b001; // Selector
+                        ALUOutWrite = 1;
+                        CURRSTATE = ALUOUTRD;
+                        
                     end
                     ADDIU: begin
-                        // controles ADDIU
+                        ALUSrcA = 2'd2; // rs
+                        ALUSrcB = 2'd2; // rt
+                        ALUOp = 3'b001; // Selector
+                        ALUOutWrite = 1;
+                        CURRSTATE = ALUOUTRD;
                     end
                     BEQ: begin
                         ALUSrcA = 2'd2; // rs
@@ -372,14 +387,14 @@ always @(posedge clk) begin
                 CURRSTATE = END; 
             end
             BEQ2: begin
-                if (ET == 1) begin
+                if (EQ == 1) begin
                     PCSrc = 2'd1;
                     PCWrite = 1;                
                 end    
                 CURRSTATE = END;
             end
             BNE2: begin
-                if (ET == 0) begin
+                if (EQ == 0) begin
                     PCSrc = 2'd1;
                     PCWrite = 1;                                    
                 end
@@ -398,6 +413,11 @@ always @(posedge clk) begin
                     PCWrite = 1;
                 end
                 CURRSTATE = END;
+            end
+
+            SHIFTEND: begin
+
+
             end
 
             END: begin // close wires
