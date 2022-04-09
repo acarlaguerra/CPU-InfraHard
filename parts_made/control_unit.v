@@ -61,11 +61,10 @@ parameter FETCH2 = 7'd1;
 parameter FETCH3 = 7'd2;
 parameter DECODE1 = 7'd3;
 parameter DECODE2 = 7'd4;
-
+parameter EXECUTE = 7'd5;
 parameter ALUOUTRD = 7'd10;
 parameter SHIFTEND = 7'd11;
-parameter UNEXOPCODE = 7'd40; 
-parameter EXECUTE = 7'd50; 
+parameter UNEXOPCODE = 7'd40;  
 parameter BEQ2 = 7'd56;
 parameter BNE2 = 7'd57;
 parameter BLE2 = 7'd58;
@@ -171,9 +170,9 @@ always @(posedge clk) begin
                 CURRSTATE = FETCH2;             
             end
             FETCH2: begin
-                PCSrc = 2'd0;
+                PCSrc = 2'd0; // ALUResult
                 PCWrite = 1;
-                CURRSTATE = FETCH3;
+                CURRSTATE = FETCH3;  
             end
             FETCH3: begin
                 PCWrite = 0;
@@ -208,6 +207,7 @@ always @(posedge clk) begin
                                     ALUSrcB = 2'd0; // rt
                                     ALUOp = 3'b001; // +
                                     ALUOutWrite = 1;
+                                    RegWrite = 1;
                                     CURRSTATE = ALUOUTRD;
                                 end
                                 AND: begin // rd <= rs & rt
@@ -383,7 +383,6 @@ always @(posedge clk) begin
                 ALUOutWrite = 0;
                 RegDst = 2'd3; // rd
                 DataSrc = 4'd0; // ALUOut 
-                RegWrite = 1;
                 CURRSTATE = END; 
             end
             BEQ2: begin

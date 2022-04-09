@@ -358,9 +358,10 @@ module cpu (
         HIOut,
         LOOut,
         SL16Out,
-        SE1_32Out,
+        SE1_32Out, // LT
         SHIFTRegOut,
-        PCOut 
+        PCOut,
+        MUXDataSrcOut 
     );
  
     mux_LdA mux_LdA_( 
@@ -396,6 +397,7 @@ module cpu (
     mux_aluA mux_aluA_(
         ALUSrcA,
         PCOut,
+        MUXPCSrcOut,
         AOut,
         MUXALUSrcAOut
     );
@@ -410,6 +412,7 @@ module cpu (
 
     mux_pc mux_pc_( 
         PCSrc,
+        ALUResult,
         ALUOutOut,
         ConcatIPCOut,
         EPCOut,
@@ -428,7 +431,7 @@ module cpu (
         //DivStop,
         //multStop,
         OPCODE,
-        funct,
+        IMMEDIATE[5:0], // FUNCT
         ALUOp,
         SHIFTOp,
         SSCtrl,
