@@ -66,12 +66,16 @@ parameter ALUOUTRT = 7'd9;
 parameter ALUOUTRD = 7'd10;
 parameter SHIFTENDRD = 7'd11;
 parameter SHIFTENDRT = 7'd12;
-parameter EXECPTOPCODE = 7'd30;
-parameter EXCEPTOVERFLOW1 = 7'd31;
+parameter EXECPTOPCODE = 7'd20;
+parameter EXCEPTOVERFLOW1 = 7'd21;
 
-parameter SLLM2 = 7'd35;
-parameter SLLM3 = 7'd36;
-
+parameter SLLM2 = 7'd32;
+parameter SLLM3 = 7'd33;
+parameter SLLM4 = 7'd34;
+parameter ADDM2 = 7'd35;
+parameter ADDM3 = 7'd36;
+parameter ADDM4 = 7'd37;
+parameter ADDM5 = 7'd38;
 parameter JAL2 = 7'd39;
 parameter JAL3 = 7'd40;
 parameter SB2 = 7'd41;
@@ -322,10 +326,42 @@ always @(posedge clk) begin
                                     PCWrite = 1;
                                     CURRSTATE = END;
                                 end
-                                ADDM: begin
-                                    // controles ADDM
+                                ADDM: begin // rd <= Mem[rs] + Mem[rt] // read Mem[rt] and store in MDR
+                                    IorD = 3'd5; // rt as address
+                                    MDRWrite = 1;
+                                    CURRSTATE = ADDM2;     
                                 end 
                         endcase
+                    end
+
+                    // ADDM OTHER PARTS
+                    ADDM2: begin // store Mem[rt] in B
+                        MDRWrite = 0;
+                        LoadBMem = 1;
+                        RegBWrite = 1;
+                        CURRSTATE = ADDM3;
+                    end
+
+                    ADDM3: begin // read Mem[rs] and store in MDR
+                        LoadBMem = 0;
+                        RegBWrite = 0;
+                        IorD = 3'd5; // rs
+                        MDRWrite = 1;
+                        CURRSTATE = ADDM4;
+                    end
+                    ADDM4: begin // store Mem[rs] in A
+                        MDRWrite = 0;
+                        LoadAMem = 1;
+                        RegAWrite = 1;
+                        CURRSTATE = ADDM5;
+                    end
+                    ADDM5: begin // ADD Mem[rs] + Mem[rt]
+                        LoadAMem = 0;
+                        ALUSrcA = 2'd2; // Mem[rs]
+                        ALUSrcB = 2'd0; // Mem[rt]
+                        ALUOp = 3'b001; // +
+                        ALUOutWrite = 1;
+                        CURRSTATE = ALUOUTRD;
                     end
 
                     // J FORMAT //
@@ -516,7 +552,7 @@ always @(posedge clk) begin
                 CURRSTATE = END;
             end
 
-            SLLM2: begin // READ Mem[offset+rs]
+            SLLM2: begin // READ Mem[offset+rs] 
                 IorD = 3'd3; 
                 MemWrite = 0;
                 MDRWrite = 1;
@@ -529,7 +565,7 @@ always @(posedge clk) begin
                 CURRSTATE = SLLM4;
             end
             SLLM4: begin // ACTUAL SHIFT
-                SHIFTOP = 3'b010; 
+                SHIFTOp = 3'b010; 
                 CURRSTATE = SHIFTENDRT;
             end
  
