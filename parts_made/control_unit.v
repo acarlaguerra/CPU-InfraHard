@@ -24,22 +24,22 @@ module control_unit(
     output reg [2:0] SHIFTOp,
     output reg [1:0] SSCtrl,
     output reg [1:0] LSCtrl,
-    output reg  MultCtrl,
-    output reg  DivCtrl,
+    output reg       MultCtrl,
+    output reg       DivCtrl,
 
     // selectors muxes
     output reg [2:0] IorD, 
     output reg [1:0] EXCPCtrl,
     output reg [1:0] RegDst,
     output reg [3:0] DataSrc,
-    output reg LoadAMem,
-    output reg LoadBMem,
+    output reg       LoadAMem,
+    output reg       LoadBMem,
     output reg [1:0] SHIFTAmt,
-    output reg SHIFTSrc,
+    output reg       SHIFTSrc,
     output reg [1:0] ALUSrcA,
     output reg [1:0] ALUSrcB, 
-    output reg LOSrc,
-    output reg HISrc,
+    output reg       LOSrc,
+    output reg       HISrc,
     output reg [1:0] PCSrc,
 
     // regs write
@@ -50,98 +50,120 @@ module control_unit(
     output reg ALUOutWrite,
     output reg EPCWrite,
     output reg HILOWrite,
-    output reg RegABWrite,
+    ///output reg RegAWrite AND RegBWrite
+    output reg RegAWrite,
+    output reg RegBWrite,
     output reg MDRWrite
 
 );
 
 //States
-parameter FETCH1 = 7'd0;
-parameter FETCH2 = 7'd1;
-parameter FETCH3 = 7'd2;
-parameter DECODE1 = 7'd3;
-parameter DECODE2 = 7'd4;
-parameter EXECUTE = 7'd5;
-parameter ALUOUTRT = 7'd9;
-parameter ALUOUTRD = 7'd10;
-parameter SHIFTENDRD = 7'd11;
-parameter SHIFTENDRT = 7'd12;
-parameter EXECPTOPCODE = 7'd20;
-parameter EXCEPTOVERFLOW1 = 7'd21;
+parameter FETCH1            = 7'd0;
+parameter FETCH2            = 7'd1;
+parameter FETCH3            = 7'd2;
+parameter DECODE1           = 7'd3;
+parameter DECODE2           = 7'd4;
+parameter EXECUTE           = 7'd5;
+parameter ALUOUTRT          = 7'd9;
+parameter ALUOUTRD          = 7'd10;
+parameter SHIFTENDRD        = 7'd11;
+parameter SHIFTENDRT        = 7'd12;
+parameter EXCEPTOPCODE1     = 7'd20;
+parameter EXCEPTOVERFLOW1   = 7'd21;
+parameter EXCEPTOVERFLOW2   = 7'd22;
+parameter EXCEPTOPCODE2     = 7'd23;
+parameter ENDEXCEPT1        = 7'd24;
+parameter ENDEXCEPT2        = 7'd25;
+parameter ENDEXCEPT3        = 7'd26;
 
-parameter SLLM2 = 7'd32;
-parameter SLLM3 = 7'd33;
-parameter SLLM4 = 7'd34;
-parameter ADDM2 = 7'd35;
-parameter ADDM3 = 7'd36;
-parameter ADDM4 = 7'd37;
-parameter ADDM5 = 7'd38;
-parameter JAL2 = 7'd39;
-parameter JAL3 = 7'd40;
-parameter SB2 = 7'd41;
-parameter LW2 = 7'd42;
-parameter LW3 = 7'd43;
-parameter LW4 = 7'd44;
-parameter LH2 = 7'd45;
-parameter LH3 = 7'd46;
-parameter LH4 = 7'd47;
-parameter LB2 = 7'd48; 
-parameter LB3 = 7'd49; 
-parameter LB4 = 7'd50;  
-parameter SLLV2 = 7'd51; 
-parameter SRAV2 = 7'd52; 
-parameter SLL2 = 7'd53;  
-parameter SRL2 = 7'd54;
-parameter SRA2 = 7'd55;
-parameter BEQ2 = 7'd56;
-parameter BNE2 = 7'd57;
-parameter BLE2 = 7'd58;
-parameter BGT2 = 7'd59;
+parameter SLLM2     = 7'd30;
+parameter SLLM3     = 7'd31;
+parameter SLLM4     = 7'd32;
+parameter SLLM5     = 7'd33;
+parameter SLLM6     = 7'd34;
+parameter ADDM2     = 7'd35;
+parameter ADDM3     = 7'd36;
+parameter ADDM4     = 7'd37;
+parameter ADDM5     = 7'd38;
+parameter JAL2      = 7'd39;
+parameter JAL3      = 7'd40;
+parameter SB2       = 7'd41;
+parameter LW2       = 7'd42;
+parameter LW3       = 7'd43;
+parameter LW4       = 7'd44;
+parameter LH2       = 7'd45;
+parameter LH3       = 7'd46;
+parameter LH4       = 7'd47;
+parameter LB2       = 7'd48; 
+parameter LB3       = 7'd49; 
+parameter LB4       = 7'd50;  
+parameter SLLV2     = 7'd51; 
+parameter SRAV2     = 7'd52; 
+parameter SLL2      = 7'd53;  
+parameter SRL2      = 7'd54;
+parameter SRA2      = 7'd55;
+parameter BEQ2      = 7'd56;
+parameter BNE2      = 7'd57;
+parameter BLE2      = 7'd58;
+parameter BGT2      = 7'd59;
+parameter SB3       = 7'd60;
+parameter SB4       = 7'd61;
+parameter SB5       = 7'd62;
+parameter SW2       = 7'd63;
+parameter SW3       = 7'd64;
+parameter SW4       = 7'd65;
+parameter SW5       = 7'd66;
+parameter SH2       = 7'd67;
+parameter SH3       = 7'd68;
+parameter SH4       = 7'd69;
+parameter SH5       = 7'd70;
+parameter LB5       = 7'd71;
+parameter LB6       = 7'd72;
 
-parameter END = 7'd60; //
+parameter END       = 7'd100; // 111111
 
 //R instructions (funct) -- opcode = 0
 parameter OPCODEZero = 6'd0;
-parameter ADD = 6'h20;
-parameter AND = 6'h24;
-parameter DIV = 6'h1a;
-parameter MULT = 6'h18;
-parameter JR = 6'h8;
-parameter MFHI = 6'h10;
-parameter MFLO = 6'h12;
-parameter SLL = 6'h0;
-parameter SLLV = 6'h4;
-parameter SLT = 6'h2a;
-parameter SRA = 6'h3;
-parameter SRAV = 6'h7;
-parameter SRL = 6'h2;
-parameter SUB = 6'h22;
-parameter BREAK = 6'hD;
-parameter RTE = 6'h13;
-parameter ADDM = 6'h5;
+parameter ADD         = 6'h20;
+parameter AND         = 6'h24;
+parameter DIV         = 6'h1a;
+parameter MULT        = 6'h18;
+parameter JR          = 6'h8;
+parameter MFHI        = 6'h10;
+parameter MFLO        = 6'h12;
+parameter SLL         = 6'h0;
+parameter SLLV        = 6'h4;
+parameter SLT         = 6'h2a;
+parameter SRA         = 6'h3;
+parameter SRAV        = 6'h7;
+parameter SRL         = 6'h2;
+parameter SUB         = 6'h22;
+parameter BREAK       = 6'hD;
+parameter RTE         = 6'h13;
+parameter ADDM        = 6'h5;
 
 
 //I instructions (opcode)
-parameter ADDI = 6'h8;
-parameter ADDIU = 6'h9;
-parameter BEQ = 6'h4;
-parameter BNE = 6'h5;
-parameter BLE = 6'h6;
-parameter BGT = 6'h7;
-parameter SLLM = 6'h1;
-parameter LB = 6'h20;
-parameter LH = 6'h21;
-parameter LUI = 6'hF;
-parameter LW = 6'h23;
-parameter SB = 6'h28;
-parameter SH = 6'h29;
-parameter SLTI = 6'hA;
-parameter SW = 6'h2a;
+parameter ADDI      = 6'h8;
+parameter ADDIU     = 6'h9;
+parameter BEQ       = 6'h4;
+parameter BNE       = 6'h5;
+parameter BLE       = 6'h6;
+parameter BGT       = 6'h7;
+parameter SLLM      = 6'h1;
+parameter LB        = 6'h20;
+parameter LH        = 6'h21;
+parameter LUI       = 6'hF;
+parameter LW        = 6'h23;
+parameter SB        = 6'h28;
+parameter SH        = 6'h29;
+parameter SLTI      = 6'hA;
+parameter SW        = 6'h2a;
 
 
 //J instructions (opcode)
-parameter J = 6'h2;
-parameter JAL = 6'h3;
+parameter J     = 6'h2;
+parameter JAL   = 6'h3;
 
 reg[6:0] CURRSTATE;
 initial begin
@@ -157,7 +179,8 @@ always @(posedge clk) begin
       ALUOutWrite  = 0;
       EPCWrite     = 0;
       HILOWrite    = 0;
-      RegABWrite   = 0;   
+      RegAWrite    = 0; //
+      RegBWrite    = 0; //     
       MDRWrite     = 0;
       
       ALUOp        = 3'b000;
@@ -185,46 +208,49 @@ always @(posedge clk) begin
     else begin
         case(CURRSTATE)
             FETCH1: begin
-                RegWrite = 0;
-                RegDst = 2'd0; // reset to rt
-                DataSrc = 4'd0; // reset to ALUOutOut
+                RegWrite    = 0;
+                RegDst      = 2'd0; // reset to rt
+                DataSrc     = 4'd0; // reset to ALUOutOut
 
-                IorD = 3'd0; // PC address
-                MemWrite = 0; // read from mem
-                ALUSrcA = 2'd0; // PC address
-                ALUOp = 3'b001; // +
-                ALUSrcB = 2'd1; // 4
+                IorD        = 3'd0; // PC address
+                MemWrite    = 0; // read from mem
+                ALUSrcA     = 2'd0; // PC address
+                ALUOp       = 3'b001; // +
+                ALUSrcB     = 2'd1; // 4
                 CURRSTATE = FETCH2;             
             end
             FETCH2: begin
-                PCSrc = 2'd0; // ALUResult
-                PCWrite = 1;
+                PCSrc       = 2'd0; // ALUResult
+                PCWrite     = 1;
                 CURRSTATE = FETCH3;  
             end
             FETCH3: begin
-                PCWrite = 0;
-                LSCtrl = 0;
-                SSCtrl = 0;
-                IRWrite = 1;
+                PCWrite     = 0;
+                LSCtrl      = 0;
+                SSCtrl      = 0;
+                IRWrite     = 1;
                 CURRSTATE = DECODE1;
             end
             DECODE1: begin // branch
-                IRWrite = 0;
-                ALUSrcA = 2'd0; // PC
-                ALUSrcB = 2'd3; // ADDRESS << 2
-                ALUOp = 3'b001; // +
+                IRWrite     = 0;
+                ALUSrcA     = 2'd0; // PC
+                ALUSrcB     = 2'd3; // ADDRESS << 2
+                ALUOp       = 3'b001; // +
                 ALUOutWrite = 1;
                 CURRSTATE = DECODE2; 
             end
             DECODE2: begin // A <= rs, B <= rt
-                LoadAMem = 0;
-                LoadBMem = 0;
-                RegABWrite = 1;
+                LoadAMem    = 0;
+                LoadBMem    = 0;
+                RegAWrite   = 1;  //
+                RegBWrite   = 1;  //
                 ALUOutWrite = 0;
                 CURRSTATE = EXECUTE;
             end
             EXECUTE: begin
-                RegABWrite = 0; 
+                //RegABWrite = 0;
+                RegAWrite = 0;
+                RegBWrite = 0; 
                 case(OPCODE)
                     // R FORMAT //
                     OPCODEZero: begin 
@@ -257,13 +283,13 @@ always @(posedge clk) begin
                                     CURRSTATE = END;
                                 end
                                 MFHI: begin // rd <= hi
-                                    DataSrc = 3'd2; // HI
+                                    DataSrc = 4'd2; // HI
                                     RegDst =  2'd3; // rd
                                     RegWrite = 1;
                                     CURRSTATE = END;
                                 end 
                                 MFLO: begin // rd <= lo
-                                    DataSrc = 3'd3; // LO
+                                    DataSrc = 4'd3; // LO
                                     RegDst =  2'd3; // rd
                                     RegWrite = 1;
                                     CURRSTATE = END; 
@@ -284,8 +310,8 @@ always @(posedge clk) begin
                                     ALUSrcA = 2'd2; // rs
                                     ALUSrcB = 2'd0; // rt
                                     ALUOp = 3'b111; // COMPARE
-                                    DataSrc = 3'd6; // LT
-                                    RegDst = 2'd0; // rd
+                                    DataSrc = 4'd6; // LT
+                                    RegDst = 2'd3; // rd
                                     RegWrite = 1;
                                     CURRSTATE = END;
                                 end                                                                                                      
@@ -334,35 +360,7 @@ always @(posedge clk) begin
                         endcase
                     end
 
-                    // ADDM OTHER PARTS
-                    ADDM2: begin // store Mem[rt] in B
-                        MDRWrite = 0;
-                        LoadBMem = 1;
-                        RegBWrite = 1;
-                        CURRSTATE = ADDM3;
-                    end
-
-                    ADDM3: begin // read Mem[rs] and store in MDR
-                        LoadBMem = 0;
-                        RegBWrite = 0;
-                        IorD = 3'd5; // rs
-                        MDRWrite = 1;
-                        CURRSTATE = ADDM4;
-                    end
-                    ADDM4: begin // store Mem[rs] in A
-                        MDRWrite = 0;
-                        LoadAMem = 1;
-                        RegAWrite = 1;
-                        CURRSTATE = ADDM5;
-                    end
-                    ADDM5: begin // ADD Mem[rs] + Mem[rt]
-                        LoadAMem = 0;
-                        ALUSrcA = 2'd2; // Mem[rs]
-                        ALUSrcB = 2'd0; // Mem[rt]
-                        ALUOp = 3'b001; // +
-                        ALUOutWrite = 1;
-                        CURRSTATE = ALUOUTRD;
-                    end
+     
 
                     // J FORMAT //
                     J: begin 
@@ -371,7 +369,7 @@ always @(posedge clk) begin
                         CURRSTATE = END;
                     end 
                     JAL: begin
-                        ALUSrcA = 2'd0; // PC
+                        ALUSrcA = 2'd1; // PC+4
                         ALUOp = 3'b000; // LOAD
                         ALUOutWrite = 1; 
                         CURRSTATE = JAL2;                        
@@ -421,6 +419,7 @@ always @(posedge clk) begin
                         ALUSrcB = 2'd2; // offset
                         ALUOp = 3'b001; // +
                         ALUOutWrite = 1;
+                        IorD = 3'd3;
                         CURRSTATE = SLLM2; 
                     end
                     LB: begin
@@ -450,8 +449,8 @@ always @(posedge clk) begin
                         LoadAMem   = 0;     // reg
                         ALUSrcA    = 2'd2;  // reg A
                         ALUSrcB    = 2'd2;  // sign-extended 16-32
-                        ALUOp      = 3'b001;   // soma
-                        IorD       = 3'd2;  // alu result  segundo ciclo??
+                        ALUOp      = 3'b001;   // +
+                        IorD       = 3'd2;  // alu result
                         MemWrite   = 0;
                         CURRSTATE  = LW2;
                     end
@@ -459,12 +458,17 @@ always @(posedge clk) begin
                         LoadAMem    = 0;
                         ALUSrcA     = 2'd2; // reg A
                         ALUSrcB     = 2'd2; // shift left 16-32
-                        ALUOp       = 3'd1; // soma
+                        ALUOp       = 3'b001; // soma
                         ALUOutWrite = 1;
                         CURRSTATE   = SB2;
                     end
                     SH: begin
-                        // controles SH
+                        LoadAMem    = 0;
+                        ALUSrcA     = 2'd2; // reg A
+                        ALUSrcB     = 2'd2; // shift left 16-32
+                        ALUOp       = 3'b001; // soma
+                        ALUOutWrite = 1;
+                        CURRSTATE   = SH2;
                     end
                     SLTI: begin // rt <= (rs < IMMEDIATE) ? 1 : 0
                         ALUSrcA  = 2'd2;   // A
@@ -475,16 +479,20 @@ always @(posedge clk) begin
                         RegWrite = 1;  
                         CURRSTATE = END;
                     end
-                    SW: begin
-                        // controles SW
+                    SW: begin // offset + rs
+                        ALUSrcA     = 2'd2; // rs
+                        ALUSrcB     = 2'd2; // offset 
+                        ALUOp       = 3'b001; // +
+                        ALUOutWrite = 1;
+                        CURRSTATE   = SW2;
                     end
-
                     // OPCODE inexistente
-                    default: begin
-                        CURRSTATE = EXECPTOPCODE;
+                    default: begin //definir instruc
+                        CURRSTATE = EXCEPTOPCODE1;
                     end
                 endcase
             end
+            // OTHER STATES
             ALUOUTRD: begin
                 if(overflow == 1 && (funct ==  ADD || funct == SUB)) begin
                     CURRSTATE = EXCEPTOVERFLOW1;
@@ -509,16 +517,45 @@ always @(posedge clk) begin
                     CURRSTATE = END; 
                 end
             end
+                    // ADDM OTHER PARTS
+            ADDM2: begin // store Mem[rt] in B
+                MDRWrite = 0;
+                LoadBMem = 1;
+                RegBWrite = 1;
+                CURRSTATE = ADDM3;
+            end
 
+            ADDM3: begin // read Mem[rs] and store in MDR
+                LoadBMem = 0;
+                RegBWrite = 0;
+                IorD = 3'd5; // rs
+                MDRWrite = 1;
+                CURRSTATE = ADDM4;
+            end
+            ADDM4: begin // store Mem[rs] in A
+                MDRWrite = 0;
+                LoadAMem = 1;
+                RegAWrite = 1;
+                CURRSTATE = ADDM5;
+            end
+            ADDM5: begin // ADD Mem[rs] + Mem[rt]
+                LoadAMem = 0;
+                ALUSrcA = 2'd2; // Mem[rs]
+                ALUSrcB = 2'd0; // Mem[rt]
+                ALUOp = 3'b001; // +
+                ALUOutWrite = 1;
+                CURRSTATE = ALUOUTRD;
+            end
             JAL2: begin
-                DataSrc = 3'd0; // ALUOutOut
+                ALUOutWrite = 0;
+                DataSrc = 4'd0; // ALUOutOut
                 RegDst = 2'd2; // $ra
                 RegWrite = 1;
                 CURRSTATE = JAL3;
             end
             JAL3: begin
                 RegWrite = 0;
-                PCSrc = 2'd1; // ALUOutOut
+                PCSrc = 2'd2; 
                 PCWrite = 1;
                 CURRSTATE = END;
             end
@@ -553,32 +590,46 @@ always @(posedge clk) begin
             end
 
             SLLM2: begin // READ Mem[offset+rs] 
-                IorD = 3'd3; 
-                MemWrite = 0;
                 MDRWrite = 1;
                 CURRSTATE = SLLM3;
             end
-            SLLM3: begin // SHIFT LOAD
+            SLLM3: begin
+                MDRWrite = 0;
+                CURRSTATE = SLLM4;           
+            end
+        
+            SLLM4: begin // SHIFT LOAD
                 SHIFTAmt = 2'd2; // Mem[offset+rs]
                 SHIFTSrc = 0; // rt (B)
                 SHIFTOp = 3'b001; // LOAD
-                CURRSTATE = SLLM4;
+                CURRSTATE = SLLM5;
             end
-            SLLM4: begin // ACTUAL SHIFT
+            SLLM5: begin // ACTUAL SHIFT
                 SHIFTOp = 3'b010; 
                 CURRSTATE = SHIFTENDRT;
             end
  
             LB2: begin
-                MDRWrite = 1;       // segundo ciclo??
+                MemWrite = 0;    // segundo ciclo??
                 CURRSTATE = LB3;  
             end
 
             LB3: begin
+                MemWrite = 0;
                 CURRSTATE = LB4;
             end
-            
+
             LB4: begin
+                MemWrite = 0;
+                CURRSTATE = LB5;
+            end
+
+            LB5: begin
+                MDRWrite = 1;
+                CURRSTATE = LB6;
+            end
+            
+            LB6: begin
                 LSCtrl       = 2'b11;    // load byte
                 DataSrc      = 4'd1;  // load byte
                 RegDst       = 2'd0;    // rt
@@ -599,12 +650,12 @@ always @(posedge clk) begin
                 LSCtrl = 2'd2; // load halfbyte
                 RegWrite = 1;
                 RegDst  = 2'd0;
-                DataSrc = 1;
+                DataSrc = 4'd1;
                 CURRSTATE  = END;
             end
 
             LW2: begin
-                MDRWrite = 1;       // segundo ciclo??
+                MDRWrite = 1;   
                 CURRSTATE = LW3;  
             end
 
@@ -613,9 +664,10 @@ always @(posedge clk) begin
             end
 
             LW4: begin
+                MDRWrite = 0;   // colocar 1 ?
                 LSCtrl = 2'd1; // load word
                 RegWrite = 1;
-                DataSrc = 1;
+                DataSrc = 4'd1;
                 RegDst = 2'd0;
                 CURRSTATE = END;
             end
@@ -640,16 +692,116 @@ always @(posedge clk) begin
                 SHIFTOp = 3'b100;
                 CURRSTATE = SHIFTENDRD;
             end
+            SB2: begin
+                MemWrite = 0;
+                IorD = 2'd2;    //aluResult
+                MDRWrite = 1;
+                CURRSTATE = SB3;
+            end
+            SB3: begin
+                CURRSTATE = SB4;
+            end
+            SB4: begin
+                CURRSTATE = SB5;
+            end
+            SB5: begin
+                MemWrite = 1;
+                SSCtrl = 2'b11; // load byte
+                CURRSTATE = END;
+            end
+            SW2: begin // Mem[offset+rs]
+                MemWrite = 1;
+                IorD = 2'd3;    //ALUOut
+                CURRSTATE = SW3;
+                
+            end
+            SW3: begin // 
+                SSCtrl = 2'b01; // load word
+                CURRSTATE = END;
+            end
+
+            SH2: begin
+                MemWrite = 0;
+                IorD = 2'd2;    // aluresult
+                MDRWrite = 1;
+                CURRSTATE = SH3;
+            end
+            SH3: begin
+                CURRSTATE = SH4;
+            end
+            SH4: begin
+                CURRSTATE = SH5;
+            end
+            SH5: begin
+                MemWrite = 1;
+                SSCtrl = 2'b10; // load halfword
+                CURRSTATE = END;
+            end
+
+
             SHIFTENDRT: begin
-                DataSrc = 3'd7;
+                DataSrc = 4'd7;
                 RegDst = 2'd0; // rt
                 RegWrite = 1;
                 CURRSTATE = END;
             end
             SHIFTENDRD: begin
-                DataSrc = 3'd7;
+                DataSrc = 4'd7;
                 RegDst = 2'd3; // rd
                 RegWrite = 1;
+                CURRSTATE = END;
+            end
+
+            EXCEPTOPCODE1 : begin /// CONTINUAR
+                ALUSrcA     = 2'd0; // PC
+                ALUSrcB     = 2'd1; // 4
+                ALUOp       = 3'b10; // sub
+                EPCWrite    = 1;
+                CURRSTATE = EXCEPTOPCODE2;
+            end
+
+            EXCEPTOPCODE2 : begin
+                IorD      = 3'd1;
+                MemWrite  = 0;
+                CURRSTATE = ENDEXCEPT1;
+            end
+
+            /*EXCEPTOPCODE3 : begin
+                EXCPCtrl      = 3'd1;
+                MemWrite      = 1;
+                LSCtrl        = 1;
+                CURRSTATE = ENDEXCEPT1;
+            end
+            */
+
+            EXCEPTOVERFLOW1 : begin
+                ALUSrcA   = 2'd0;
+                ALUSrcB   = 2'd1;
+                ALUOp     = 3'b10;  //sub
+                EPCWrite  = 1;
+                CURRSTATE = EXCEPTOVERFLOW2;
+            end
+
+            EXCEPTOVERFLOW2 : begin
+                IorD      = 3'd1;
+                MemWrite  = 0;
+                CURRSTATE = ENDEXCEPT1;
+            end
+
+            ENDEXCEPT1 : begin
+                CURRSTATE = ENDEXCEPT2;
+            end
+
+            ENDEXCEPT2 : begin
+                CURRSTATE = ENDEXCEPT3;
+            end
+
+            ENDEXCEPT3 : begin
+                PCWrite     = 1;
+                MDRWrite    = 1;
+                EXCPCtrl    = 0;
+                LSCtrl      = 2'b11;
+                PCSrc       = 2'd1;
                 CURRSTATE = END;
             end
 
@@ -661,7 +813,8 @@ always @(posedge clk) begin
                 ALUOutWrite  = 0;
                 EPCWrite     = 0;
                 HILOWrite    = 0;
-                RegABWrite   = 0;   
+                RegAWrite    = 0; //
+                RegBWrite    = 0; //  
                 MDRWrite     = 0;
                 
                 ALUOp        = 3'b000;
