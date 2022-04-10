@@ -117,8 +117,11 @@ parameter SH2       = 7'd67;
 parameter SH3       = 7'd68;
 parameter SH4       = 7'd69;
 parameter SH5       = 7'd70;
+<<<<<<< HEAD
 parameter LB5       = 7'd71;
 parameter LB6       = 7'd72;
+=======
+>>>>>>> bd834af0571d4bc578523a4a1f90608dcae6e50d
 
 parameter END       = 7'd100; // 111111
 
@@ -547,7 +550,10 @@ always @(posedge clk) begin
                 CURRSTATE = ALUOUTRD;
             end
             JAL2: begin
+<<<<<<< HEAD
                 ALUOutWrite = 0;
+=======
+>>>>>>> bd834af0571d4bc578523a4a1f90608dcae6e50d
                 DataSrc = 4'd0; // ALUOutOut
                 RegDst = 2'd2; // $ra
                 RegWrite = 1;
@@ -664,7 +670,11 @@ always @(posedge clk) begin
             end
 
             LW4: begin
+<<<<<<< HEAD
                 MDRWrite = 0;   // colocar 1 ?
+=======
+                MDRWrite = 0;
+>>>>>>> bd834af0571d4bc578523a4a1f90608dcae6e50d
                 LSCtrl = 2'd1; // load word
                 RegWrite = 1;
                 DataSrc = 4'd1;
@@ -712,10 +722,18 @@ always @(posedge clk) begin
             SW2: begin // Mem[offset+rs]
                 MemWrite = 1;
                 IorD = 2'd3;    //ALUOut
+<<<<<<< HEAD
+=======
+                MDRWrite = 1;
+>>>>>>> bd834af0571d4bc578523a4a1f90608dcae6e50d
                 CURRSTATE = SW3;
                 
             end
             SW3: begin // 
+<<<<<<< HEAD
+=======
+                MemWrite = 1;
+>>>>>>> bd834af0571d4bc578523a4a1f90608dcae6e50d
                 SSCtrl = 2'b01; // load word
                 CURRSTATE = END;
             end
