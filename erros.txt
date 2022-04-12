@@ -1,5 +1,4 @@
 mult/div nao implementados
-jal nao guarda o valor certo (corrigivel)
 excecoes nao funcionando como deviam
 operacoes com a memoria : store, load, addm, sllm
 alguns shifts acho que o srav sllv estao guardando no lugar errado
